@@ -1,4 +1,4 @@
-# Install Unsloth, Xformers (Flash Attention) and all other packages!
+# Install Unsloth, Xformers (Flash Attention) before running the below code! 
 
 from unsloth import FastLanguageModel
 import torch
