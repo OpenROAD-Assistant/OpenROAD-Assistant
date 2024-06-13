@@ -3,4 +3,3 @@ faiss-cpu==1.7.2
 accelerate==0.5.1
 bitsandbytes==0.26.0
 langchain==0.0.65
-unsloth==1.0.0
