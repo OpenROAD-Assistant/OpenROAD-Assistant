@@ -6,6 +6,8 @@ It includes the prompt-script and question-answer adpaters and the associated co
 
 ## Model Description
 
+![Model Architecture](Images/Model_Architecture.png)
+
 ## Installation
 ### Requirements
 - Python >= 3.8
