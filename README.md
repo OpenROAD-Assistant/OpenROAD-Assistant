@@ -19,3 +19,5 @@ It includes the prompt-script and question-answer adpaters and the associated co
 - Unsloth (Only for QA_Adaptor)
 - CUDA = 7.5
 - CUDA Toolkit = 12.1
+- sentence-transformers
+- faiss-cpu
