@@ -21,7 +21,7 @@ It includes the prompt-script and question-answer adpaters and the associated co
 pip install -r requirements.txt
 ```
 
-## Fine-Tuning
+## Running the Model
 ### Overview
 While there are many ways to fine-tune LLMs including vLLMs, Unsloth, etc; this script fine-tunes Llama3 using the Unsloth library, optimized with techniques such as Low Rank Adaption (LoRA) and gradient checkpointing.
 
