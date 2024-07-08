@@ -43,10 +43,16 @@ Before running the script, ensure you adjust the following settings according to
 - Model_name: Specify the pre-trained model.
 - Batch size and other parameters in the embedding and retrieval functions for performance tuning.
 
-
 ```
 python inference.py
 ```
+
+OpenROAD-Assistant is available at the following link for direct inference:
+
+[OpenROAD-Assistant](https://huggingface.co/Utsav2001/OR-QA-Adaptor)
+
+Change the Model_name in the inference file to use the above model from HuggingFace
+
 
 ### Expected Output
 
