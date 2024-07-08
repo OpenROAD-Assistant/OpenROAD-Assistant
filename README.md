@@ -31,11 +31,22 @@ pip install "unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git"
 pip install --no-deps xformers "trl<0.9.0" peft accelerate bitsandbytes
 ```
 
+### Configuration
+
+While the default parameters used to fine-tune OpenROAD-Assistant are set in the Training script, you can also, according to your preference, configure the following parameters in the script:
+
+max_seq_length: Maximum sequence length of the model.
+- dtype: Data type for model parameters (auto-detected if set to None).
+- load_in_4bit: Enables 4-bit quantization to reduce memory usage.
+- Model-specific parameters like lora_alpha, lora_dropout and others as per your optimization needs.
+
+Ensure that parameters like max_seq_length, dtype and load_in_4bit are consistent for both fine-tuning and inference
+
 ### Fine-Tuning
 ```
 python Training.py
 ```
-After running the script, the model will start training, and logs will be generated for each step. Outputs are typically saved in the specified output directory.
+After running the script, the model will start training, and logs will be generated for each step. The output model's trained weights will be stored locally and on HuggingFace, thus, make sure you have a HF account or comment that part of the code
 
 
 ### Running Inference
