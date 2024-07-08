@@ -23,8 +23,9 @@ pip install -r requirements.txt
 
 ## Data
 1) For Q-A adaptor training, the dataset for instruction SFT can be found [here](https://huggingface.co/datasets/Open-Orca/SlimOrca)
-2) For the first RAFT fine-tuning, the dummy dataset is uploaded in this repo and can be found [here](https://github.com/OpenROAD-Assistant/OpenROAD-Assistant/blob/main/Data/Dummy_Raft-FT-1.jsonl)
-3) For the second RAFT fine-tuning, the dummy dataset is also uploaded in this repo and can be found [here](https://github.com/OpenROAD-Assistant/OpenROAD-Assistant/blob/main/Data/Dummy_Raft-FT-2.jsonl)
+2) For the  RAFT fine-tuning, the dummy datasets are uploaded in this repo and can be found [here](https://github.com/OpenROAD-Assistant/OpenROAD-Assistant/tree/main/Data)
+
+*While fine-tuning the model in your system, kindly change the names of the datasets to make them consistent. For this study, we uploaded these datasets on HuggingFace which we recommend for ease of use but is not necessary.
 
 ## Running the Model
 ### Overview
