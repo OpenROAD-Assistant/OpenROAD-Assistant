@@ -21,6 +21,11 @@ It includes the prompt-script and question-answer adpaters and the associated co
 pip install -r requirements.txt
 ```
 
+## Data
+1) For Q-A adaptor training, the dataset for instruction SFT can be found [here](https://huggingface.co/datasets/Open-Orca/SlimOrca)
+2) For the first RAFT fine-tuning, the dummy dataset is uploaded in this repo and can be found [here](https://github.com/OpenROAD-Assistant/OpenROAD-Assistant/blob/main/Data/Dummy_Raft-FT-1.jsonl)
+3) For the second RAFT fine-tuning, the dummy dataset is also uploaded in this repo and can be found [here](https://github.com/OpenROAD-Assistant/OpenROAD-Assistant/blob/main/Data/Dummy_Raft-FT-2.jsonl)
+
 ## Running the Model
 ### Overview
 While there are many ways to fine-tune LLMs including vLLMs, Unsloth, etc; this script fine-tunes Llama3 using the Unsloth library, optimized with techniques such as Low Rank Adaption (LoRA) and gradient checkpointing.
