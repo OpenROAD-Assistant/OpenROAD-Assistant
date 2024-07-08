@@ -3,6 +3,9 @@
 #!pip install -q sentence-transformers
 #!pip install -q faiss-cpu
 #!pip install accelerate
+max_seq_length = 2048 
+dtype = None 
+load_in_4bit = True 
 
 if False:
     from unsloth import FastLanguageModel
