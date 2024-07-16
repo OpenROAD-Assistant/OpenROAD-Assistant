@@ -61,7 +61,7 @@ pip install -r requirements.txt
 ```
 #### 5. Run the training script
 ```
-python Training_modified.py --datasets ../Data/Dummy_Raft-FT-1.jsonl ../Data/Dummy_Raft-FT-2.jsonl
+python training.py --datasets ../Data/Dummy_Raft-FT-1.jsonl ../Data/Dummy_Raft-FT-2.jsonl
 ```
 After running the script, the model will start training, and logs will be generated for each step. The output model's trained weights will be stored locally and on HuggingFace, thus, make sure you have an HF account or comment that part of the code
 
