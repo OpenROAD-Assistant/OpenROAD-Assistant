@@ -2,9 +2,21 @@
 
 from unsloth import FastLanguageModel
 import torch
+import argparse
+import pandas as pd
+from trl import SFTTrainer
+from transformers import TrainingArguments
+from unsloth import is_bfloat16_supported
+from transformers.utils import logging
+
 max_seq_length = 2048 # Choose any! We auto support RoPE Scaling internally!
 dtype = None # None for auto detection. Float16 for Tesla T4, V100, Bfloat16 for Ampere+
 load_in_4bit = True # Use 4bit quantization to reduce memory usage. Can be False.
+
+parser = argparse.ArgumentParser(description='Fine-tune a language model with specified datasets.')
+parser.add_argument('--datasets', type=str, nargs=2, required=True, help='Paths of the two datasets to use for training')
+args = parser.parse_args()
+
 
 model, tokenizer = FastLanguageModel.from_pretrained(
     model_name = "unsloth/llama-3-8b-bnb-4bit",
@@ -45,9 +57,7 @@ def formatting_prompts_func(examples):
 pass
 dataset = dataset.map(formatting_prompts_func, batched = True,)
 
-from trl import SFTTrainer
-from transformers import TrainingArguments
-from unsloth import is_bfloat16_supported
+
 
 trainer = SFTTrainer(
     model = model,
@@ -84,8 +94,7 @@ print(f"{start_gpu_memory} GB of memory reserved.")
 trainer_stats = trainer.train()
 
 #@title OpenROAD RAFT data prep
-from datasets import load_dataset
-data1 = load_dataset("Utsav2001/RAFT", split = "train")
+data = pd.read_json(args.datasets[0], lines=True)
 EOS_TOKEN = tokenizer.eos_token
 def formatting_prompts_func(examples):
     convos = examples["conversations"]
@@ -97,17 +106,15 @@ def formatting_prompts_func(examples):
         texts.append(text)
     return { "text" : texts, }
 pass
-data1 = data1.map(formatting_prompts_func, batched = True,)
+data = data.map(formatting_prompts_func, batched = True,)
 
-from trl import SFTTrainer
-from transformers import TrainingArguments
-from transformers.utils import logging
+
 logging.set_verbosity_info()
 
 trainer2 = SFTTrainer(
     model = model,
     tokenizer = tokenizer,
-    train_dataset = data1,
+    train_dataset = data,
     dataset_text_field = "text",
     max_seq_length = max_seq_length,
     dataset_num_proc = 2,
@@ -151,8 +158,7 @@ print(f"Peak reserved memory % of max memory = {used_percentage} %.")
 print(f"Peak reserved memory for training % of max memory = {lora_percentage} %.")
 
 #@title OpenROAD data prep
-from datasets import load_dataset
-data1 = load_dataset("Utsav2001/Context-Orca", split = "train")
+data1 = pd.read_json(args.datasets[1], lines=True)
 EOS_TOKEN = tokenizer.eos_token
 def formatting_prompts_func(examples):
     convos = examples["conversations"]
@@ -166,9 +172,6 @@ def formatting_prompts_func(examples):
 pass
 data1 = data1.map(formatting_prompts_func, batched = True,)
 
-from trl import SFTTrainer
-from transformers import TrainingArguments
-from transformers.utils import logging
 logging.set_verbosity_info()
 
 trainer3 = SFTTrainer(
@@ -219,5 +222,5 @@ print(f"Peak reserved memory for training % of max memory = {lora_percentage} %.
 
 model.save_pretrained("OpenROAD-Assistant_QA_Model") # Local saving
 tokenizer.save_pretrained("OpenROAD-Assistant_QA_Model")
-model.push_to_hub("your_name/OpenROAD-Assistant_QA_Model", token = "...") # Online saving
-tokenizer.push_to_hub("your_name/OpenROAD-Assistant_QA_Model", token = "...") # Online saving
+# model.push_to_hub("your_name/OpenROAD-Assistant_QA_Model", token = "...") # Online saving
+# tokenizer.push_to_hub("your_name/OpenROAD-Assistant_QA_Model", token = "...") # Online saving
