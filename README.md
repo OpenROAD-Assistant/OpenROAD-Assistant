@@ -82,10 +82,6 @@ OpenROAD-Assistant is available at the following link for direct inference:
 
 [OpenROAD-Assistant](https://huggingface.co/Utsav2001/OR-QA-Adaptor)
 
-#### You can download the model to your local device using the following command:
-```
-wget "https://huggingface.co/Utsav2001/OR-QA-Adaptor"
-```
 Change the Model_name in the inference file to use the above model from HuggingFace
 
 
