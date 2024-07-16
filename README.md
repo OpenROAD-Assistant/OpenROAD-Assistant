@@ -72,13 +72,17 @@ Before running the script, ensure you adjust the following settings according to
 - Batch size and other parameters in the embedding and retrieval functions for performance tuning.
 
 ```
-python inference.py
+python inference.py --model_name "OpenROAD-Assistant" --dataset ../Data/RAG_Database.csv --question "What is Detailed Placement in OpenROAD?"
 ```
 
 OpenROAD-Assistant is available at the following link for direct inference:
 
 [OpenROAD-Assistant](https://huggingface.co/Utsav2001/OR-QA-Adaptor)
 
+#### You can download the model to your local device using the following command:
+```
+wget "https://huggingface.co/Utsav2001/OR-QA-Adaptor"
+```
 Change the Model_name in the inference file to use the above model from HuggingFace
 
 
