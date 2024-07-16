@@ -56,7 +56,7 @@ source ORA/bin/activate
 ```
 #### 4. Download all requirements 
 ```
-cd OpenROAD-Assistant/QA_Adaptor/
+cd OpenROAD-Assistant/QA_Adaptor/ or cd OpenROAD-Assistant/Script_Adaptor
 pip install -r requirements.txt
 ```
 #### 5. Run the training script
