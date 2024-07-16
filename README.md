@@ -66,7 +66,7 @@ python training.py --datasets ../Data/Dummy_Raft-FT-1.jsonl ../Data/Dummy_Raft-F
 After running the script, the model will start training, and logs will be generated for each step. The output model's trained weights will be stored locally and on HuggingFace, thus, make sure you have an HF account or comment that part of the code
 
 ##### Note:
- It takes 2 hours and 37 minutes to train the OpenROAD-Assistant’s script adapter using four NVIDIA RTX A5500 GPUs, and it takes 50 minutes to train the OpenROAD-Assistant’s Question-answer adapter using one NVIDIA V100 GPU. OpenROAD-Assistant is trained for 30 epochs until the training loss converges
+It takes about 2.5 hours to train the OpenROAD-Assistant’s script adapter using four NVIDIA RTX A5500 GPUs, and it takes about 1 hour to train the OpenROAD-Assistant’s Question-Answer adapter using one NVIDIA V100 GPU. OpenROAD-Assistant is trained for 30 epochs until the training loss converges
 
 
 ### Running Inference
