@@ -3,23 +3,34 @@
 #!pip install -q sentence-transformers
 #!pip install -q faiss-cpu
 #!pip install accelerate
+
+import argparse
+
+# Parse command-line arguments
+parser = argparse.ArgumentParser(description='Inference with specified model and dataset.')
+parser.add_argument('--model_name', type=str, required=True, help='Name of the model to use for inference')
+parser.add_argument('--dataset', type=str, required=True, help='Name of the dataset to use for inference')
+parser.add_argument('--question', type=str, required=True, help='Question to use for inference')
+args = parser.parse_args()
+
 max_seq_length = 2048 
 dtype = None 
 load_in_4bit = True 
 
+
 if False:
     from unsloth import FastLanguageModel
     model, tokenizer = FastLanguageModel.from_pretrained(
-        model_name = "OpenROAD-Assistant",
+        model_name = args.model_name,
         max_seq_length = max_seq_length,
         dtype = dtype,
         load_in_4bit = load_in_4bit,
     )
     FastLanguageModel.for_inference(model) # Enable native 2x faster inference
 
-from datasets import load_dataset
+import pandas as pd
 from sentence_transformers import SentenceTransformer
-dataset = load_dataset("Utsav2001/OpenROAD")
+dataset = pd.read_csv(args.dataset)
 
 ST = SentenceTransformer("mixedbread-ai/mxbai-embed-large-v1")
 def embed(batch):
@@ -48,8 +59,8 @@ def search(query: str, k: int = 3 ):
 import torch
 from langchain.prompts import ChatPromptTemplate
 
-question = "What is Detailed Placement in OpenROAD?"
-scores , result = search("What is Detailed Placement in OpenROAD?", 3 )
+question = args.question
+scores , result = search(args.question, 3 )
 a=result['output'][0]
 messages = [
     {
