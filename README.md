@@ -11,10 +11,8 @@ It includes the prompt-script and question-answer adpaters and the associated co
 ## Installation
 ### Requirements
 - Python >= 3.8
-- torch = 2.2.2+cu121
-- xformers < 0.0.26
-- CUDA = 7.5
-- CUDA Toolkit = 12.1
+- Python-bnb
+- Pip
 
 
 ## Running the Model
