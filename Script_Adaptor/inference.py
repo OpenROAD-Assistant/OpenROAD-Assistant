@@ -3,19 +3,8 @@
 ##########################
 import numpy as np
 import os
-os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"]="0,1,2,3"
 import torch
 import gc
-from langchain.text_splitter import TextSplitter
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.document_loaders.csv_loader import CSVLoader
-from langchain_chroma import Chroma
-from langchain_community.embeddings import GPT4AllEmbeddings
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import PromptTemplate
-from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
-from langchain_core.prompts import PromptTemplate
 from transformers import (
   AutoModelForCausalLM,
   AutoTokenizer,
@@ -25,7 +14,6 @@ from peft import PeftModel
 import pandas as pd
 from openpyxl import Workbook
 import argparse
-from langchain_core.documents.base import Document
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import cos_sim
 from sentence_transformers.quantization import quantize_embeddings
