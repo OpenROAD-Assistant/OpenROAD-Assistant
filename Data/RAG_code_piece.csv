@@ -1,0 +1,501 @@
+Description:,Code Piece:
+Template of reading .lib (liberty) files,"from openroad import Tech
+from pathlib import Path
+
+tech = Tech()
+# Set file path
+libDir = Path(""lib_path"")
+libFiles = libDir.glob(""*.lib"")
+# Read .lib files
+for libFile in libFiles:
+  tech.readLiberty(libFile.as_posix())"
+Template of reading .lef files,"from openroad import Tech
+from pathlib import Path
+
+tech = Tech()
+# Set file path
+lefDir = Path(""lef_path"")
+lefFiles = lefDir.glob('*.lef')
+# Read .lef files
+for lefFile in lefFiles:
+  tech.readLef(lefFile.as_posix())"
+Template of reading technology files,"from openroad import Tech
+from pathlib import Path
+
+tech = Tech()
+# Set file path
+techlefDir = Path(""techlef_path"")
+techLefFiles = lefDir.glob(""*.tech.lef"")
+# Read tech files
+for techLefFile in techLefFiles:
+  tech.readLef(techLefFile.as_posix())"
+Template of reading verilog files (reading netlist file),"from openroad import Tech, Design
+from pathlib import Path
+
+tech = Tech()
+design = Design(tech)
+design_top_module_name = ""design_top_module_name""
+# Read design files
+design.readVerilog(""verilogFile"")
+design.link(design_top_module_name)"
+Template of reading OpenROAD design file in .odb format,"from openroad import Tech, Design
+
+tech = Tech()
+# Make sure you have files read into OpenROAD DB
+design = Design(tech)
+design.readDb(""xxx.odb"")"
+Template of reading DEF (.def) files,"from openroad import Tech, Design
+
+tech = Tech()
+design = Design(tech)
+design.readDef(""defFile"")"
+Template of creating and propagate the clock signal,"from openroad import Tech, Design
+
+tech = Tech()
+design = Design(tech)
+clock_period = 200
+port_name = ""port_name""
+clock_name = ""clock_name""
+# Create clock signal
+design.evalTclString(""create_clock -period %s [get_ports %s] -name %s""%(clock_period, port_name, clock_name))
+# Propagate the clock signal
+design.evalTclString(""set_propagated_clock [all_clocks]"")"
+Template of running floorplanning with utilization rate (hight/width),"from openroad import Tech, Design
+
+tech = Tech()
+design = Design(tech)
+
+floorplan = design.getFloorplan() 
+# Set the floorplan utilization to 50% 
+floorplan_utilization = 50 
+# Set the aspect ratio of the design (height/width) as 1 
+floorplan_aspect_ratio = 1 
+# Set the spacing between core and die as 5 
+floorplan_core_spacing = [design.micronToDBU(5) for i in range(4)] 
+# Find the site in lef
+site = floorplan.findSite(""site_name"")
+floorplan.initFloorplan(floorplan_utilization, floorplan_aspect_ratio,  
+                        floorplan_core_spacing[0], floorplan_core_spacing[1], 
+                        floorplan_core_spacing[2], floorplan_core_spacing[3], site) 
+floorplan.makeTracks()"
+Template of running floorplanning with specific die and core area,"from openroad import Tech, Design
+
+tech = Tech()
+design = Design(tech)
+
+floorplan = design.getFloorplan() 
+# Set the core and die area 
+die_area = odb.Rect(design.micronToDBU(0), design.micronToDBU(0),  
+  design.micronToDBU(45), design.micronToDBU(45)) 
+core_area = odb.Rect(design.micronToDBU(5), design.micronToDBU(5),  
+  design.micronToDBU(40), design.micronToDBU(40) 
+# Find the site in lef
+site = floorplan.findSite(""site_name"")
+floorplan.initFloorplan(die_area, core_area, site) 
+floorplan.makeTracks()"
+Template of placing I/O pins (ports),"from openroad import Tech, Design
+
+tech = Tech()
+design = Design(tech)
+
+params = design.getIOPlacer().getParameters()
+params.setRandSeed(42)
+params.setMinDistanceInTracks(False)
+params.setMinDistance(design.micronToDBU(0))
+params.setCornerAvoidance(design.micronToDBU(0))
+# Place the pins on M8 and M9
+design.getIOPlacer().addHorLayer(design.getTech().getDB().getTech().findLayer(""M8""))
+design.getIOPlacer().addVerLayer(design.getTech().getDB().getTech().findLayer(""M9""))
+IOPlacer_random_mode = True
+design.getIOPlacer().run(IOPlacer_random_mode)"
+Template of running global placement,"from openroad import Tech, Design
+
+tech = Tech()
+design = Design(tech)
+
+gpl = design.getReplace()
+gpl.setTimingDrivenMode(False)
+gpl.setRoutabilityDrivenMode(True)
+gpl.setUniformTargetDensityMode(True)
+# Set the max iteration of global placement to 30 times
+gpl.setInitialPlaceMaxIter(30)
+gpl.setInitDensityPenalityFactor(0.05)
+gpl.doInitialPlace()
+gpl.doNesterovPlace()
+gpl.reset()"
+Template of running macro placer,"from openroad import Tech, Design
+import odb
+
+tech = Tech()
+design = Design(tech)
+
+macros = [inst for inst in ord.get_db_block().getInsts() if inst.getMaster().isBlock()] 
+if len(macros) > 0:
+  mpl = design.getMacroPlacer()
+  # Set the halo around macros to 5 microns
+  mpl_halo_x, mpl_halo_y = 5, 5
+  mpl.setHalo(mpl_halo_x, mpl_halo_y)
+  # Set the channel width between macros to 5 microns
+  mpl_channel_x, mpl_channel_y = 5, 5
+  mpl.setChannel(mpl_channel_x, mpl_channel_y)
+  # Set the fence region as a user defined area in microns
+  design.getMacroPlacer().setFenceRegion(15, 30, 10, 40)
+  # Snap the macro to layer M4 (usually M4)
+  layer = design.getTech().getDB().getTech().findLayer(""M4"")
+  mpl.setSnapLayer(layer)
+  # Or using mpl.placeMacrosCornerMaxWl()
+  mpl.placeMacrosCornerMinWL()"
+Template of running detailed placement,"from openroad import Tech, Design
+import odb
+
+tech = Tech()
+design = Design(tech)
+
+site = design.getBlock().getRows()[0].getSite()
+# Set the max displacement on the x and y direction with 1 and 3 um
+max_disp_x = int(design.micronToDBU(1) / site.getWidth())
+max_disp_y = int(design.micronToDBU(3) / site.getHeight())
+design.getOpendp().detailedPlacement(max_disp_x, max_disp_y, """", False)"
+Template of running CTS (clock tree synthesis),"from openroad import Tech, Design
+
+tech = Tech()
+design = Design(tech)
+
+design.evalTclString(""set_propagated_clock [core_clock]"")
+design.evalTclString(""set_wire_rc -clock -resistance 0.03574 -capacitance 0.07516"")
+design.evalTclString(""set_wire_rc -signal -resistance 0.03574 -capacitance 0.07516"")
+
+cts = design.getTritonCts()
+parms = cts.getParms()
+parms.setWireSegmentUnit(20)
+# Can choose different buffer cells for cts
+cts.setBufferList(""BUF_X2"")
+cts.setRootBuffer(""BUF_X2"")
+cts.setSinkBuffer(""BUF_X2"")
+cts.runTritonCts()
+
+site = design.getBlock().getRows()[0].getSite()
+max_disp_x = int(design.micronToDBU(1) / site.getWidth())
+max_disp_y = int(design.micronToDBU(3) / site.getHeight())
+design.getOpendp().detailedPlacement(max_disp_x, max_disp_y, """", False)"
+Template of placing filler cells,"from openroad import Tech, Design
+
+tech = Tech()
+design = Design(tech)
+
+db = ord.get_db()
+filler_masters = list()
+# Filler cell prefix may be different when using different library
+filler_cells_prefix = ""filler_.*""
+for lib in db.getLibs():
+  for master in lib.getMasters():
+    master_name = master.getConstName()
+    if re.fullmatch(filler_cells_prefix, master_name) != None:
+      filler_masters.append(master)
+if len(filler_masters) == 0:
+  print(""wrong filler cell prefix"")
+else:
+  design.getOpendp().fillerPlacement(filler_masters, filler_cells_prefix)"
+Template of performing power planning (creating power delivery network (PDN)) with power rings,"from openroad import Tech, Design
+
+tech = Tech()
+design = Design(tech)
+
+# Power Planning
+
+# Global Connect
+for net in design.getBlock().getNets():
+  if net.getSigType() == ""POWER"" or net.getSigType() == ""GROUND"":
+    net.setSpecial()
+VDD_net = design.getBlock().findNet(""VDD"")
+VSS_net = design.getBlock().findNet(""VSS"")
+switched_power = None
+secondary = list()
+if VDD_net == None:
+  VDD_net = odb.dbNet_create(design.getBlock(), ""VDD"")
+  VDD_net.setSpecial()
+  VDD_net.setSigType(""POWER"")
+if VSS_net == None:
+  VSS_net = odb.dbNet_create(design.getBlock(), ""VSS"")
+  VSS_net.setSpecial()
+  VSS_net.setSigType(""GROUND"")
+design.getBlock().addGlobalConnect(region = None, instPattern = "".*"", 
+                                  pinPattern = ""^VDD$"", net = VDD_net, 
+                                  do_connect = True)
+design.getBlock().addGlobalConnect(region = None, instPattern = "".*"",
+                                  pinPattern = ""^VDDPE$"", net = VDD_net,
+                                  do_connect = True)
+design.getBlock().addGlobalConnect(region = None, instPattern = "".*"",
+                                  pinPattern = ""^VDDCE$"", net = VDD_net,
+                                  do_connect = True)
+design.getBlock().addGlobalConnect(region = None, instPattern = "".*"",
+                                  pinPattern = ""^VSS$"", net = VSS_net, 
+                                  do_connect = True)
+design.getBlock().addGlobalConnect(region = None, instPattern = "".*"",
+                                  pinPattern = ""^VSSE$"", net = VSS_net,
+                                  do_connect = True)
+design.getBlock().globalConnect()
+# Voltage Domains
+pdngen = design.getPdnGen()
+pdngen.setCoreDomain(power = VDD_net, switched_power = switched_power, 
+                    ground = VSS_net, secondary = secondary)
+# Set the width of the PDN ring and the spacing between VDD and VSS rings
+core_ring_width = [design.micronToDBU(5), design.micronToDBU(5)]
+core_ring_spacing = [design.micronToDBU(5), design.micronToDBU(5)]
+core_ring_core_offset = [design.micronToDBU(0) for i in range(4)]
+core_ring_pad_offset = [design.micronToDBU(0) for i in range(4)]
+# When the two layers are parallel, specify the distance between via cuts.
+pdn_cut_pitch = [design.micronToDBU(0) for i in range(2)]
+
+ring_connect_to_pad_layers = list()
+for layer in design.getTech().getDB().getTech().getLayers():
+  if layer.getType() == ""ROUTING"":
+    ring_connect_to_pad_layers.append(layer)
+
+# Define power grid for core
+domains = [pdngen.findDomain(""Core"")]
+halo = [design.micronToDBU(0) for i in range(4)]
+for domain in domains:
+  pdngen.makeCoreGrid(domain = domain, name = ""top"", starts_with = pdn.GROUND, 
+                      pin_layers = [], generate_obstructions = [], powercell = None,
+                      powercontrol = None, powercontrolnetwork = ""STAR"")
+m1 = design.getTech().getDB().getTech().findLayer(""M1"")
+m4 = design.getTech().getDB().getTech().findLayer(""M4"")
+m7 = design.getTech().getDB().getTech().findLayer(""M7"")
+m8 = design.getTech().getDB().getTech().findLayer(""M8"")
+grid = pdngen.findGrid(""top"")
+for g in grid:
+  # Make Ring for the core
+  pdngen.makeRing(grid = g, layer0 = m7, width0 = core_ring_width[0], spacing0 = core_ring_spacing[0],
+                  layer1 = m8, width1 = core_ring_width[0], spacing1 = core_ring_spacing[0],
+                  starts_with = pdn.GRID, offset = core_ring_core_offset, pad_offset = core_ring_pad_offset, extend = False,
+                  pad_pin_layers = ring_connect_to_pad_layers, nets = [])
+  # Add power and ground grid on M1 and attach to cell's VDD/VSS pin
+  pdngen.makeFollowpin(grid = g, layer = m1, 
+                      width = design.micronToDBU(0.07), extend = pdn.CORE)
+  # Create the rest of the power delivery network
+  pdngen.makeStrap(grid = g, layer = m4, width = design.micronToDBU(1.2), 
+                  spacing = design.micronToDBU(1.2), pitch = design.micronToDBU(6), offset = design.micronToDBU(0), 
+                  number_of_straps = 0, snap = False, starts_with = pdn.GRID, extend = pdn.CORE, nets = [])
+  pdngen.makeStrap(grid = g, layer = m7, width = design.micronToDBU(1.4),
+                  spacing = design.micronToDBU(1.4), pitch = design.micronToDBU(10.8), offset = design.micronToDBU(0),
+                  number_of_straps = 0, snap = False, starts_with = pdn.GRID, extend = pdn.RINGS, nets = [])
+  pdngen.makeConnect(grid = g, layer0 = m1, layer1 = m4, 
+                  cut_pitch_x = pdn_cut_pitch[0], cut_pitch_y = pdn_cut_pitch[1], vias = [], techvias = [],
+                  max_rows = 0, max_columns = 0, ongrid = [], split_cuts = dict(), dont_use_vias = )
+  pdngen.makeConnect(grid = g, layer0 = m4, layer1 = m7,
+                  cut_pitch_x = pdn_cut_pitch[0], cut_pitch_y = pdn_cut_pitch[1], vias = [], techvias = [],
+                  max_rows = 0, max_columns = 0, ongrid = [], split_cuts = dict(), dont_use_vias = )
+  pdngen.makeConnect(grid = g, layer0 = m7, layer1 = m8,
+                  cut_pitch_x = pdn_cut_pitch[0], cut_pitch_y = pdn_cut_pitch[1], vias = [], techvias = [],
+                  max_rows = 0, max_columns = 0, ongrid = [], split_cuts = dict(), dont_use_vias = )
+
+pdngen.checkSetup()
+pdngen.buildGrids(False)
+pdngen.writeToDb(True, )
+pdngen.resetShapes()"
+Template of creating power distribute networks (PDN) for macros,"from openroad import Tech, Design
+
+tech = Tech()
+design = Design(tech)
+
+# Power Planning
+
+# Global Connect
+for net in design.getBlock().getNets():
+  if net.getSigType() == ""POWER"" or net.getSigType() == ""GROUND"":
+    net.setSpecial()
+VDD_net = design.getBlock().findNet(""VDD"")
+VSS_net = design.getBlock().findNet(""VSS"")
+switched_power = None
+secondary = list()
+if VDD_net == None:
+  VDD_net = odb.dbNet_create(design.getBlock(), ""VDD"")
+  VDD_net.setSpecial()
+  VDD_net.setSigType(""POWER"")
+if VSS_net == None:
+  VSS_net = odb.dbNet_create(design.getBlock(), ""VSS"")
+  VSS_net.setSpecial()
+  VSS_net.setSigType(""GROUND"")
+design.getBlock().addGlobalConnect(region = None, instPattern = "".*"", 
+                                  pinPattern = ""^VDD$"", net = VDD_net, 
+                                  do_connect = True)
+design.getBlock().addGlobalConnect(region = None, instPattern = "".*"",
+                                  pinPattern = ""^VDDPE$"", net = VDD_net,
+                                  do_connect = True)
+design.getBlock().addGlobalConnect(region = None, instPattern = "".*"",
+                                  pinPattern = ""^VDDCE$"", net = VDD_net,
+                                  do_connect = True)
+design.getBlock().addGlobalConnect(region = None, instPattern = "".*"",
+                                  pinPattern = ""^VSS$"", net = VSS_net, 
+                                  do_connect = True)
+design.getBlock().addGlobalConnect(region = None, instPattern = "".*"",
+                                  pinPattern = ""^VSSE$"", net = VSS_net,
+                                  do_connect = True)
+design.getBlock().globalConnect()
+# Voltage Domains
+pdngen = design.getPdnGen()
+pdngen.setCoreDomain(power = VDD_net, switched_power = switched_power, 
+                    ground = VSS_net, secondary = secondary)
+# Set the width of the PDN ring and the spacing between VDD and VSS rings
+core_ring_width = [design.micronToDBU(5), design.micronToDBU(5)]
+core_ring_spacing = [design.micronToDBU(5), design.micronToDBU(5)]
+core_ring_core_offset = [design.micronToDBU(0) for i in range(4)]
+core_ring_pad_offset = [design.micronToDBU(0) for i in range(4)]
+# When the two layers are parallel, specify the distance between via cuts.
+pdn_cut_pitch = [design.micronToDBU(0) for i in range(2)]
+
+ring_connect_to_pad_layers = list()
+for layer in design.getTech().getDB().getTech().getLayers():
+  if layer.getType() == ""ROUTING"":
+    ring_connect_to_pad_layers.append(layer)
+
+# Define power grid for core
+domains = [pdngen.findDomain(""Core"")]
+halo = [design.micronToDBU(0) for i in range(4)]
+for domain in domains:
+  pdngen.makeCoreGrid(domain = domain, name = ""top"", starts_with = pdn.GROUND, 
+                      pin_layers = [], generate_obstructions = [], powercell = None,
+                      powercontrol = None, powercontrolnetwork = ""STAR"")
+m1 = design.getTech().getDB().getTech().findLayer(""Metal1"")
+m4 = design.getTech().getDB().getTech().findLayer(""Metal4"")
+m7 = design.getTech().getDB().getTech().findLayer(""Metal7"")
+m8 = design.getTech().getDB().getTech().findLayer(""Metal8"") 
+grid = pdngen.findGrid(""top"")
+# Create power delivery network for macros (assume macro has pins on Metal 4)
+m5 = design.getTech().getDB().getTech().findLayer(""Metal5"")
+m6 = design.getTech().getDB().getTech().findLayer(""Metal6"")
+for i in range(len(macros)):
+  for domain in domains:
+    pdngen.makeInstanceGrid(domain = domain, name = f""Instance_pdn_{i}"",
+                            starts_with = pdn.GROUND, inst = macros[i], halo = halo,
+                            pg_pins_to_boundary = True, default_grid = False, 
+                            generate_obstructions = [], is_bump = False)
+  grid = pdngen.findGrid(f""Instance_pdn_{i}"")
+  for g in grid:
+    pdngen.makeStrap(grid = g, layer = m5, width = m5.getMinWidth(), 
+                    spacing = m5.getSpacing(), pitch = m5.getPitch(), offset = m5.getOffset(),
+                    number_of_straps = 0, snap = True, starts_with = pdn.GRID, extend = pdn.CORE, nets = [])
+    pdngen.makeStrap(grid = g, layer = m6, width = m6.getMinWidth(),
+                    spacing = m6.getSpacing(), pitch = m6.getPitch(), offset = m6.getOffset(),
+                    number_of_straps = 0, snap = True, starts_with = pdn.GRID, extend = pdn.CORE, nets = [])
+    pdngen.makeConnect(grid = g, layer0 = m4, layer1 = m5,
+                    cut_pitch_x = pdn_cut_pitch[0], cut_pitch_y = pdn_cut_pitch[1], vias = [], techvias = [],
+                    max_rows = 0, max_columns = 0, ongrid = [], split_cuts = dict(), dont_use_vias = )
+    pdngen.makeConnect(grid = g, layer0 = m5, layer1 = m6,
+                    cut_pitch_x = pdn_cut_pitch[0], cut_pitch_y = pdn_cut_pitch[1], vias = [], techvias = [],
+                    max_rows = 0, max_columns = 0, ongrid = [], split_cuts = dict(), dont_use_vias = )
+    pdngen.makeConnect(grid = g, layer0 = m6, layer1 = m7,
+                    cut_pitch_x = pdn_cut_pitch[0], cut_pitch_y = pdn_cut_pitch[1], vias = [], techvias = [],
+                    max_rows = 0, max_columns = 0, ongrid = [], split_cuts = dict(), dont_use_vias = )
+pdngen.checkSetup()
+pdngen.buildGrids(False)
+pdngen.writeToDb(True, )
+pdngen.resetShapes()"
+Template of performing IR (voltage) drop analysis for nodes on metal 1 grids,"from openroad import Tech, Design
+import odb
+
+tech = Tech()
+design = Design(tech)
+
+# Static IR drop Analysis
+
+psm_obj = design.getPDNSim()
+psm_obj.setNet(ord.Tech().getDB().getChip().getBlock().findNet(""VDD""))
+design.evalTclString(f""psm::set_corner [sta::cmd_corner]"")
+psm_obj.analyzePowerGrid('', False, '', '')
+drops = psm_obj.getIRDropForLayer(tech.getDB().getTech().findLayer(""Metal1""))"
+"Template of reporting internal power, switching power, and leakage power","from openroad import Tech, Design
+
+tech = Tech()
+design = Design(tech)
+
+# Report Power
+design.evalTclString(""report_power"")"
+Template of performing global routing,"from openroad import Tech, Design
+
+tech = Tech()
+design = Design(tech)
+
+signal_low_layer = design.getTech().getDB().getTech().findLayer(""Metal1"").getRoutingLevel()
+signal_high_layer = design.getTech().getDB().getTech().findLayer(""Metal6"").getRoutingLevel()
+clk_low_layer = design.getTech().getDB().getTech().findLayer(""Metal1"").getRoutingLevel()
+clk_high_layer = design.getTech().getDB().getTech().findLayer(""Metal6"").getRoutingLevel()
+grt = design.getGlobalRouter()
+grt.setMinRoutingLayer(signal_low_layer)
+grt.setMaxRoutingLayer(signal_high_layer)
+grt.setMinLayerForClock(clk_low_layer)
+grt.setMaxLayerForClock(clk_high_layer)
+grt.setAdjustment(0.5)
+grt.setVerbose(True)
+grt.globalRoute(True)"
+Template of performing detailed routing,"from openroad import Tech, Design
+
+tech = Tech()
+design = Design(tech)
+
+drter = design.getTritonRoute()
+params = drt.ParamStruct()
+params.outputMazeFile = """"
+params.outputDrcFile = """"
+params.outputCmapFile = """"
+params.outputGuideCoverageFile = """"
+params.dbProcessNode = """"
+params.enableViaGen = True
+params.drouteEndIter = 1
+params.viaInPinBottomLayer = """"
+params.viaInPinTopLayer = """"
+params.orSeed = -1
+params.orK = 0
+params.bottomRoutingLayer = ""Metal1""
+params.topRoutingLayer = ""Metal6""
+params.verbose = 1
+params.cleanPatches = True
+params.doPa = True
+params.singleStepDR = False
+params.minAccessPoints = 1
+params.saveGuideUpdates = False
+drter.setParams(params)
+drter.main()"
+Template function to horizontally flip the instance,"# This function is not provided by OpenROAD, you have to create this function.
+def flipX(value):
+    if value == ""R0"":
+      return ""MX""
+    elif value == ""R90"":
+      return ""MYR90""
+    elif value == ""R180"":
+      return ""MY""
+    elif value == ""R270"":
+      return ""MXR90""
+    elif value == ""MY"":
+      return ""R180""
+    elif value == ""MYR90"":
+      return ""R90""
+    elif value == ""MX"":
+      return ""R0""
+    elif value == ""MXR90"":
+      return ""R270"""
+Template function to vertically flip the instance,"# This function is not provided by OpenROAD, you have to create this function.
+def flipY(value):
+    if value == ""R0"":
+      return ""MY""
+    elif value == ""R90"":
+      return ""MXR90""
+    elif value == ""R180"":
+      return ""MX""
+    elif value == ""R270"":
+      return ""MYR90""
+    elif value == ""MY"":
+      return ""R0""
+    elif value == ""MYR90"":
+      return ""R270""
+    elif value == ""MX"":
+      return ""R180""
+    elif value == ""MXR90"":
+      return ""R90"""
+Template of getting the library cell (master cell) from the OpenROAD db,"# Get the database
+db = ord.get_db()
+# Define the new library cell name
+new_mast_name = 'NOR_2X6'
+# Check if the required library cell exists in the database
+new_mast = db.findMaster(new_mast_name)"
