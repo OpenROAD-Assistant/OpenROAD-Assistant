@@ -59,6 +59,7 @@ pip install -r requirements.txt
 ```
 #### 5. Run the training script
 ```
+cd QA_Adaptor
 python training.py --datasets ../Data/Dummy_Raft-FT-1.jsonl ../Data/Dummy_Raft-FT-2.jsonl
 ```
 After running the script, the model will start training, and logs will be generated for each step. The output model's trained weights will be stored locally and on HuggingFace, thus, make sure you have an HF account or comment that part of the code
@@ -72,13 +73,24 @@ Before running the script, ensure you adjust the following settings according to
 - Model_name: Specify the pre-trained model.
 - Batch size and other parameters in the embedding and retrieval functions for performance tuning.
 
+For QA adaptor
 ```
-python inference.py --model_name "OpenROAD-Assistant" --dataset ../Data/RAG_Database.csv --question "What is Detailed Placement in OpenROAD?"
+cd QA_Adaptor
+python inference.py --model_name "OpenROAD-Assistant-QA-Adaptor" --dataset ../Data/RAG_Database.csv --question "What is Detailed Placement in OpenROAD?"
+```
+For Script adaptor
+```
+cd Script_Adaptor
+python inference.py --model_name "OpenROAD-Assistant-Script-Adaptor" --RAG_api_path ../Data/RAG_APIs.csv --RAG_code_path ../Data/RAG_code_piece.csv --question "How can I get every pin in the design in a list?"
 ```
 
-OpenROAD-Assistant is available at the following link for direct inference:
+OpenROAD-Assistant-QA-Adaptor is available at the following link for direct inference:
 
-[OpenROAD-Assistant](https://huggingface.co/Utsav2001/OR-QA-Adaptor)
+[OpenROAD-Assistant-QA-Adaptor](https://huggingface.co/Utsav2001/OR-QA-Adaptor)
+
+OpenROAD-Assistant-Script-Adaptor is available at the following link for direct inference:
+
+[OpenROAD-Assistant-Script-Adaptor](https://huggingface.co/bywu/ORA_script)
 
 Change the Model_name in the inference file to use the above model from HuggingFace
 
