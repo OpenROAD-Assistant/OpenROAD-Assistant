@@ -1,6 +1,3 @@
-##########################
-#Must include these lines#
-##########################
 import numpy as np
 import os
 import torch
@@ -12,7 +9,6 @@ from transformers import (
 )
 from peft import PeftModel
 import pandas as pd
-from openpyxl import Workbook
 import argparse
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import cos_sim
