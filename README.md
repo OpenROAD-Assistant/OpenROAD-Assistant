@@ -10,7 +10,7 @@ It includes the prompt-script and question-answer adpaters and the associated co
 
 ## Installation
 ### Requirements
-- Python >= 3.8
+- Python >= 3.8 but <3.11
 - Python-bnb
 - Pip
 
