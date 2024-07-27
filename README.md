@@ -86,11 +86,11 @@ python inference.py --model_name "OpenROAD-Assistant-Script-Adaptor" --RAG_api_p
 
 OpenROAD-Assistant-QA-Adaptor is available at the following link for direct inference:
 
-[OpenROAD-Assistant-QA-Adaptor](https://huggingface.co/Utsav2001/OR-QA-Adaptor)
+[OpenROAD-Assistant-QA-Adaptor](https://huggingface.co/OpenROAD-Assistant/QA-Adaptor)
 
 OpenROAD-Assistant-Script-Adaptor is available at the following link for direct inference:
 
-[OpenROAD-Assistant-Script-Adaptor](https://huggingface.co/bywu/ORA_script)
+[OpenROAD-Assistant-Script-Adaptor](https://huggingface.co/OpenROAD-Assistant/Script_Adaptor)
 
 Change the Model_name in the inference file to use the above model from HuggingFace
 
