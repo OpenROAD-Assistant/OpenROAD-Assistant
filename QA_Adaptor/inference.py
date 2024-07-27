@@ -5,6 +5,7 @@
 #!pip install accelerate
 
 import argparse
+from datasets import Dataset
 
 # Parse command-line arguments
 parser = argparse.ArgumentParser(description='Inference with specified model and dataset.')
@@ -30,7 +31,8 @@ if False:
 
 import pandas as pd
 from sentence_transformers import SentenceTransformer
-dataset = pd.read_csv(args.dataset)
+df = pd.read_csv(args.dataset)
+dataset = Dataset.from_pandas(df)
 
 ST = SentenceTransformer("mixedbread-ai/mxbai-embed-large-v1")
 def embed(batch):
