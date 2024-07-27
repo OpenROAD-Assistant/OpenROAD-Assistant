@@ -76,21 +76,21 @@ Before running the script, ensure you adjust the following settings according to
 For QA adaptor
 ```
 cd QA_Adaptor
-python inference.py --model_name "OpenROAD-Assistant-QA-Adaptor" --dataset ../Data/RAG_Database.csv --question "What is Detailed Placement in OpenROAD?"
+python inference.py --model_name "OpenROAD-Assistant/QA-Adaptor" --dataset ../Data/RAG_Database.csv --question "What is Detailed Placement in OpenROAD?"
 ```
 For Script adaptor
 ```
 cd Script_Adaptor
-python inference.py --model_name "OpenROAD-Assistant-Script-Adaptor" --RAG_api_path ../Data/RAG_APIs.csv --RAG_code_path ../Data/RAG_code_piece.csv --question "How can I get every pin in the design in a list?"
+python inference.py --model_name "OpenROAD-Assistant/Script_Adaptor" --RAG_api_path ../Data/RAG_APIs.csv --RAG_code_path ../Data/RAG_code_piece.csv --question "How can I get every pin in the design in a list?"
 ```
 
 OpenROAD-Assistant-QA-Adaptor is available at the following link for direct inference:
 
-[OpenROAD-Assistant-QA-Adaptor](https://huggingface.co/OpenROAD-Assistant/QA-Adaptor)
+[OpenROAD-Assistant/QA-Adaptor](https://huggingface.co/OpenROAD-Assistant/QA-Adaptor)
 
 OpenROAD-Assistant-Script-Adaptor is available at the following link for direct inference:
 
-[OpenROAD-Assistant-Script-Adaptor](https://huggingface.co/OpenROAD-Assistant/Script_Adaptor)
+[OpenROAD-Assistant/Script_Adaptor](https://huggingface.co/OpenROAD-Assistant/Script_Adaptor)
 
 Change the Model_name in the inference file to use the above model from HuggingFace
 
