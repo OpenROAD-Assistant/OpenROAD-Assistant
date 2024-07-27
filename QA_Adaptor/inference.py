@@ -4,8 +4,14 @@
 #!pip install -q faiss-cpu
 #!pip install accelerate
 
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+
 import argparse
-from datasets import Dataset
+from unsloth import FastLanguageModel
+from peft import AutoPeftModelForCausalLM
+from transformers import AutoTokenizer
 
 # Parse command-line arguments
 parser = argparse.ArgumentParser(description='Inference with specified model and dataset.')
@@ -19,17 +25,18 @@ dtype = None
 load_in_4bit = True 
 
 
-if False:
-    from unsloth import FastLanguageModel
-    model, tokenizer = FastLanguageModel.from_pretrained(
-        model_name = args.model_name,
-        max_seq_length = max_seq_length,
-        dtype = dtype,
-        load_in_4bit = load_in_4bit,
-    )
-    FastLanguageModel.for_inference(model) # Enable native 2x faster inference
+model = AutoPeftModelForCausalLM.from_pretrained(
+    args.model_name, # YOUR MODEL YOU USED FOR TRAINING
+    load_in_4bit = load_in_4bit,
+)
+tokenizer = AutoTokenizer.from_pretrained(args.model_name)
+
+
+#FastLanguageModel.for_inference(model) # Enable native 2x faster inference
+
 
 import pandas as pd
+from datasets import Dataset
 from sentence_transformers import SentenceTransformer
 df = pd.read_csv(args.dataset)
 dataset = Dataset.from_pandas(df)
@@ -45,7 +52,8 @@ def embed(batch):
     return {"embeddings" : ST.encode(information)}
 
 dataset = dataset.map(embed,batched=True,batch_size=16)
-data = dataset["train"]
+#data = dataset["train"]
+data=dataset
 data = data.add_faiss_index("embeddings")
 def search(query: str, k: int = 3 ):
     """a function that embeds a new query and returns the most probable results"""
@@ -75,10 +83,13 @@ messages = [
 # prepare the messages for the model
 input_ids = tokenizer.apply_chat_template(messages, truncation=True, add_generation_prompt=True, return_tensors="pt").to("cuda")
 
+attention_mask = (input_ids != tokenizer.pad_token_id).long().to("cuda")
+
 # inference
 outputs = model.generate(
         input_ids=input_ids,
         max_new_tokens= 1024,
+        attention_mask=attention_mask,
         do_sample=True,
         temperature=0.7,
         top_k=50,
