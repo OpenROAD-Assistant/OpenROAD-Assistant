@@ -92,9 +92,6 @@ OpenROAD-Assistant-Script-Adaptor is available at the following link for direct 
 
 [OpenROAD-Assistant/Script_Adaptor](https://huggingface.co/OpenROAD-Assistant/Script_Adaptor)
 
-Change the Model_name in the inference file to use the above model from HuggingFace
-
-
 ### Expected Output
 
 A sample question- "What is Detailed Placement in OpenROAD?" has been asked in the script. The script processes a predefined query for which the output will be printed to the console.
