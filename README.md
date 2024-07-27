@@ -45,7 +45,7 @@ git clone "https://github.com/OpenROAD-Assistant/OpenROAD-Assistant.git"
 ```
 #### 2. If you are on High Performance Clusters (HPC), start an interactive instance to gain compute resources (Optional)
 ```
-srun --cpus-per-task=2 --mem=16GB --gres=gpu:v100:1 --time=4:00:00 --pty /bin/bash -l
+srun --cpus-per-task=2 --mem=32GB --gres=gpu:v100:1 --time=4:00:00 --pty /bin/bash -l
 ```
 #### 3. Create and activate a virtual environment (Recommended)
 ```
