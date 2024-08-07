@@ -1,7 +1,5 @@
 # OpenROAD Assistant
-This repository hosts the large-language models that serve as chatbots to OpenROAD. 
-It includes the prompt-script and question-answer adpaters and the associated codes to train the models and perform inference. 
-
+This repository hosts the scripts to use the large-language models that serve as chatbots to OpenROAD. The large language models are hosted on HuggingFace. The repository scripts to run training and inference for both the prompt-script and question-answer adpaters.
 
 
 ## Model Description
@@ -10,20 +8,19 @@ It includes the prompt-script and question-answer adpaters and the associated co
 
 ## Installation
 ### Requirements
-- Python >= 3.8 but <3.11
-- Python-bnb
-- Pip
+- Python3.9.16
+- Pip24.0
 
 
 ## Running the Model
 ### Overview
-While there are many ways to fine-tune LLMs including vLLMs, Unsloth, etc; this script fine-tunes Llama3 using the Unsloth library, optimized with techniques such as Low Rank Adaption (LoRA) and gradient checkpointing.
+While there are many ways to fine-tune LLMs, including vLLMs, Unsloth, etc., this script fine-tunes Llama3 using the Unsloth library, optimized with techniques such as Low-Rank Adaption (LoRA) and gradient checkpointing.
 
 ### Data
 1) For Q-A adaptor training, the dataset for instruction SFT can be found [here](https://huggingface.co/datasets/Open-Orca/SlimOrca)
 2) For the  RAFT fine-tuning, the dummy datasets are uploaded in this repo and can be found [here](https://github.com/OpenROAD-Assistant/OpenROAD-Assistant/tree/main/Data)
 
-*While fine-tuning the model in your system, kindly change the names of the datasets to make them consistent. For this study, we uploaded these datasets on HuggingFace which we recommend for ease of use but is not necessary.
+*While fine-tuning the model in your system, kindly change the names of the datasets to make them consistent. For this study, we uploaded these datasets on HuggingFace, which we recommend for ease of use but is not necessary.
 
 
 ### Configuration
