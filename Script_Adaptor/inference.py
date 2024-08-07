@@ -47,17 +47,17 @@ from sentence_transformers.quantization import quantize_embeddings
 from unsloth import FastLanguageModel
 
 def inference(model_name: str,
-            RAG_api_path: str,
-            RAG_code_path: str,
+            RAG_API_Path: str,
+            RAG_Code_Path: str,
             question: str
             ):
   ##############
   #Set up model#
   ##############
-  dtype = None 
-  load_in_4bit = True 
-  max_seq_length = 2048 
-  
+  dtype = None
+  load_in_4bit = True
+  max_seq_length = 2048
+
   model, tokenizer = FastLanguageModel.from_pretrained(
     model_name = model_name,
     max_seq_length = max_seq_length,
@@ -93,24 +93,24 @@ def inference(model_name: str,
 
   # Load CSVs and prepare documents
   print("---loading API descriptions---")
-  api_df = pd.read_csv(RAG_api_path)
+  api_df = pd.read_csv(RAG_API_Path)
   api_documents, api_documents_dict = prepare_documents(df = api_df)
 
   print("---loading code template descriptions---")
-  template_df = pd.read_csv(RAG_code_path)
+  template_df = pd.read_csv(RAG_Code_Path)
   template_documents, template_documents_dict = prepare_documents(df = template_df)
 
   print("---concatenating 2 datasets---")
   all_splits = api_documents + template_documents# + qa_documents
   all_dict = {**api_documents_dict, **template_documents_dict}#, **qa_documents_dict}
   # Split documents into smaller chunks if needed
-  
+
 
   print("---finish RAG set---")
   RAG_PROMPT_TEMPLATE = "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n{system_prompt}<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nHere are some useful contents, you do not have to use them if they are not related to the answer::\n{context}\n--------------------------------------------\nNow here is the question you need to answer:\n{question}\n<|eot_id|><|start_header_id|>assistant<|end_header_id|>"
   embedding_model = SentenceTransformer("mixedbread-ai/mxbai-embed-large-v1")
   embeddings = embedding_model.encode(all_splits)
- 
+
   def answer_with_rag(
     question,
     system_prompt,
@@ -131,15 +131,15 @@ def inference(model_name: str,
     for doc in relevant_docs:
       content = doc
       final_docs.append("\n".join(f"{key}: {value}" for key, value in all_dict[content].items()))
-  
+
     # Build the final prompt
     context = "\nExtracted documents:"
     context += "".join([f"\n\nDocument {str(i)}:\n" + doc for i, doc in enumerate(final_docs)])
-  
+
     final_prompt = RAG_PROMPT_TEMPLATE.format(question = question,
                                               context = context,
                                               system_prompt = system_prompt)
-  
+
     print("=> Generating answer...")
     input_ids = tokenizer.encode(final_prompt, truncation=True, return_tensors="pt").to("cuda")
 
@@ -156,8 +156,8 @@ def inference(model_name: str,
     print(answer)
     print("------------")
     return answer
-  
-  
+
+
   answer = answer_with_rag(question,
                             system_prompt,
                             model,
@@ -166,13 +166,13 @@ def inference(model_name: str,
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser(description = "parsing the path")
-  parser.add_argument("--model_name", type = str, default = "./")
-  parser.add_argument("--RAG_api_path", type = str, default = "./")
-  parser.add_argument("--RAG_code_path", type = str, default = "./")
-  parser.add_argument("--question", type = str, default = "get all pins in the design.")
+  parser.add_argument("--Model_Name", type = str, default = "./")
+  parser.add_argument("--RAG_API_Path", type = str, default = "./")
+  parser.add_argument("--RAG_Code_Path", type = str, default = "./")
+  parser.add_argument("--Question", type = str, default = "get all pins in the design.")
   pyargs = parser.parse_args()
-  inference(model_name = pyargs.model_name,
-          RAG_api_path = pyargs.RAG_api_path,
-          RAG_code_path = pyargs.RAG_code_path,
-          question = pyargs.question
+  inference(model_name = pyargs.Model_Name,
+          RAG_API_Path = pyargs.RAG_API_Path,
+          RAG_Code_Path = pyargs.RAG_Code_Path,
+          question = pyargs.Question
           )

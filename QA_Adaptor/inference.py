@@ -44,21 +44,21 @@ from transformers import AutoTokenizer
 
 # Parse command-line arguments
 parser = argparse.ArgumentParser(description='Inference with specified model and dataset.')
-parser.add_argument('--model_name', type=str, required=True, help='Name of the model to use for inference')
-parser.add_argument('--dataset', type=str, required=True, help='Name of the dataset to use for inference')
-parser.add_argument('--question', type=str, required=True, help='Question to use for inference')
+parser.add_argument('--Model_Name', type=str, required=True, help='Name of the model to use for inference')
+parser.add_argument('--Dataset', type=str, required=True, help='Name of the dataset to use for inference')
+parser.add_argument('--Question', type=str, required=True, help='Question to use for inference')
 args = parser.parse_args()
 
-max_seq_length = 2048 
-dtype = None 
-load_in_4bit = True 
+max_seq_length = 2048
+dtype = None
+load_in_4bit = True
 
 
 model = AutoPeftModelForCausalLM.from_pretrained(
-    args.model_name, # YOUR MODEL YOU USED FOR TRAINING
+    args.Model_Name, # YOUR MODEL YOU USED FOR TRAINING
     load_in_4bit = load_in_4bit,
 )
-tokenizer = AutoTokenizer.from_pretrained(args.model_name)
+tokenizer = AutoTokenizer.from_pretrained(args.Model_Name)
 
 
 #FastLanguageModel.for_inference(model) # Enable native 2x faster inference
@@ -67,7 +67,7 @@ tokenizer = AutoTokenizer.from_pretrained(args.model_name)
 import pandas as pd
 from datasets import Dataset
 from sentence_transformers import SentenceTransformer
-df = pd.read_csv(args.dataset)
+df = pd.read_csv(args.Dataset)
 dataset = Dataset.from_pandas(df)
 
 ST = SentenceTransformer("mixedbread-ai/mxbai-embed-large-v1")
@@ -98,8 +98,8 @@ def search(query: str, k: int = 3 ):
 import torch
 from langchain.prompts import ChatPromptTemplate
 
-question = args.question
-scores , result = search(args.question, 3 )
+question = args.Question
+scores , result = search(args.Question, 3 )
 a=result['output'][0]
 messages = [
     {
