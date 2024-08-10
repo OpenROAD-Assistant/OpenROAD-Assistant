@@ -128,7 +128,7 @@ trainer_stats = trainer.train()
 
 #@title OpenROAD RAFT data prep
 data = pd.read_json(args.datasets[0], lines=True)
-data = Data.from_pandas(df)
+data = data.from_pandas(df)
 EOS_TOKEN = tokenizer.eos_token
 def formatting_prompts_func(examples):
     convos = examples["conversations"]
@@ -193,7 +193,7 @@ print(f"Peak reserved memory for training % of max memory = {lora_percentage} %.
 
 #@title OpenROAD data prep
 data1 = pd.read_json(args.datasets[1], lines=True)
-data1 = Data1.from_pandas(df)
+data1 = data1.from_pandas(df)
 EOS_TOKEN = tokenizer.eos_token
 def formatting_prompts_func(examples):
     convos = examples["conversations"]
