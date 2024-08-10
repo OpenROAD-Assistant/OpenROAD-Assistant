@@ -40,6 +40,7 @@ from trl import SFTTrainer
 from transformers import TrainingArguments
 from unsloth import is_bfloat16_supported
 from transformers.utils import logging
+from datasets import Dataset
 
 max_seq_length = 2048 # Choose any! We auto support RoPE Scaling internally!
 dtype = None # None for auto detection. Float16 for Tesla T4, V100, Bfloat16 for Ampere+
@@ -127,6 +128,7 @@ trainer_stats = trainer.train()
 
 #@title OpenROAD RAFT data prep
 data = pd.read_json(args.datasets[0], lines=True)
+data = Data.from_pandas(df)
 EOS_TOKEN = tokenizer.eos_token
 def formatting_prompts_func(examples):
     convos = examples["conversations"]
@@ -191,6 +193,7 @@ print(f"Peak reserved memory for training % of max memory = {lora_percentage} %.
 
 #@title OpenROAD data prep
 data1 = pd.read_json(args.datasets[1], lines=True)
+data1 = Data1.from_pandas(df)
 EOS_TOKEN = tokenizer.eos_token
 def formatting_prompts_func(examples):
     convos = examples["conversations"]
