@@ -127,20 +127,31 @@ print(f"{start_gpu_memory} GB of memory reserved.")
 trainer_stats = trainer.train()
 
 #@title OpenROAD RAFT data prep
+import pandas as pd
+from datasets import Dataset
+
+# Load your data as a pandas DataFrame
 data = pd.read_json(args.datasets[0], lines=True)
-data = data.from_pandas(df)
+
+# Convert the pandas DataFrame to a datasets.Dataset
+dataset = Dataset.from_pandas(data)
+
 EOS_TOKEN = tokenizer.eos_token
+
+# Define the formatting function
 def formatting_prompts_func(examples):
     convos = examples["conversations"]
     texts = []
-    mapper = {"system" : "SYSTEM:", "human" : "USER:", "gpt" : "ASSISTANT:"}
-    end_mapper = {"system" : "\n\n", "human" : "\n", "gpt" : "</s>\n"}
+    mapper = {"system": "SYSTEM:", "human": "USER:", "gpt": "ASSISTANT:"}
+    end_mapper = {"system": "\n\n", "human": "\n", "gpt": "</s>\n"}
     for convo in convos:
-        text = "".join(f"{mapper[(turn := x['from'])]} {x['value']}{end_mapper[turn]}" for x in convo)+ EOS_TOKEN
+        text = "".join(f"{mapper[(turn := x['from'])]} {x['value']}{end_mapper[turn]}" for x in convo) + EOS_TOKEN
         texts.append(text)
-    return { "text" : texts, }
-pass
-data = data.map(formatting_prompts_func, batched = True,)
+    return {"text": texts}
+
+# Apply the map function using the datasets library
+data = dataset.map(formatting_prompts_func, batched=True)
+
 
 
 logging.set_verbosity_info()
@@ -192,20 +203,30 @@ print(f"Peak reserved memory % of max memory = {used_percentage} %.")
 print(f"Peak reserved memory for training % of max memory = {lora_percentage} %.")
 
 #@title OpenROAD data prep
+import pandas as pd
+from datasets import Dataset
+
+# Load your data as a pandas DataFrame
 data1 = pd.read_json(args.datasets[1], lines=True)
-data1 = data1.from_pandas(df)
+
+# Convert the pandas DataFrame to a datasets.Dataset
+dataset = Dataset.from_pandas(data1)
+
 EOS_TOKEN = tokenizer.eos_token
+
 def formatting_prompts_func(examples):
     convos = examples["conversations"]
     texts = []
-    mapper = {"system" : "SYSTEM:", "human" : "USER:", "gpt" : "ASSISTANT:"}
-    end_mapper = {"system" : "\n\n", "human" : "\n", "gpt" : "</s>\n"}
+    mapper = {"system": "SYSTEM:", "human": "USER:", "gpt": "ASSISTANT:"}
+    end_mapper = {"system": "\n\n", "human": "\n", "gpt": "</s>\n"}
     for convo in convos:
-        text = "".join(f"{mapper[(turn := x['from'])]} {x['value']}{end_mapper[turn]}" for x in convo)+ EOS_TOKEN
+        text = "".join(f"{mapper[(turn := x['from'])]} {x['value']}{end_mapper[turn]}" for x in convo) + EOS_TOKEN
         texts.append(text)
-    return { "text" : texts, }
-pass
-data1 = data1.map(formatting_prompts_func, batched = True,)
+    return {"text": texts}
+
+# Apply the map function using the datasets library
+data1 = dataset.map(formatting_prompts_func, batched=True)
+
 
 logging.set_verbosity_info()
 
