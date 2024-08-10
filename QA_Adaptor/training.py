@@ -29,6 +29,9 @@
 
 # Install Unsloth, Xformers (Flash Attention) before running the below code! 
 
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
 from unsloth import FastLanguageModel
 import torch
 import argparse
