@@ -191,3 +191,5 @@ Upsize or downsize the instance with the input “master” library cell,odb.dbI
 Use name to find the master cell (library cell). Return None if the name does not match any master cell.,odb.dbDatabase.findMaster(,str(name),odb.dbMaster
 Create a clock signal at the clk_i port with a period of 50 ps and name it core_clk.,openroad.Design.evalTclString(“create_clock -period 50 [get_ports clk_i] -name core_clock”),,
 "Return True if the net’s disconnected flag is set to True, which typically means the net is disconnected from all pins. Return False if the flag is set to False, indicating that the net has connections with pins.",odb.dbNet.isDisconnected(),,Bool
+Return the max allowed load capacitance for a dbMTerm,openroad.Timing.getMaxCapLimit(,odb.dbMTerm,Float
+Return the max allow slew rate for a dbMTerm,openroad.Timing.getMaxSlewLimit(,odb.dbMTerm,Float
